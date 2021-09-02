@@ -1,0 +1,63 @@
+server:
+  port: 5203
+  max-http-header-size: 10000000
+
+#spring配置
+spring:
+  application:
+    name: tool-boxes
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/test?useSSL=false&Unicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  druid:
+    #初始连接数
+    initialSize: 5
+    #最小连接池数量
+    minIdle: 10
+    #最大连接池数量
+    maxActive: 20
+    #配置获取连接等待超时的时间
+    maxWait: 60000
+    #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    #配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 300000
+    #配置一个连接在池中最大生存的时间，单位是毫秒
+    maxEvictableIdleTimeMillis: 900000
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  redis:
+    database: 0
+    host: 127.0.0.1
+    password:
+    port: 6379
+    timeout: 5000
+    jedis:
+      #最大连接池数
+      max-active: 8
+      #连接池最大阻塞等待时间（-1没有限制）
+      max-wait: -1
+      #最大空闲连接数
+      max-idle: 300
+      #最小空闲连接数
+      min-idle: 0
+  main:
+    allow-bean-definition-overriding: true #是否允许同名bean进行覆盖
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true    #返回对象属性使用驼峰命名
+    object-wrapper-factory: com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory     #返回JsonObject、Map属性使用驼峰命名
+  global-config:
+    db-config:    #逻辑删除
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# 跨域配置
+originAllow: '*'
