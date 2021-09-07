@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!-- 日志根目录-->
+    <springProperty scope="context" name="LOG_HOME" source="logging.path" defaultValue="E:/log/WXB-ELE"/>
+
+    <!-- 日志级别 -->
+    <springProperty scope="context" name="LOG_ROOT_LEVEL" source="logging.level.root" defaultValue="INFO"/>
+
+    <!-- 日志文件名称-->
+    <property name="LOG_PREFIX" value="WXB-ELE" />
+
+    <!-- 日志文件编码-->
+    <property name="LOG_CHARSET" value="UTF-8" />
+
+    <!-- 日志文件路径+日期-->
+    <property name="LOG_DIR" value="${LOG_HOME}/%d{yyyyMMdd}" />
+
+    <!--对日志进行格式化-->
+    <property name="OUTPUT_FORMAT" value="%date [%level] [%thread] %logger{60} [%file : %line] %msg%n"/>
+
+    <!--彩色版格式化日志-->
+    <property name="OUTPUT_FORMAT_COLOR" value="%red(%date) %green([%thread]) %highlight(%level) %boldMagenta(%logger{60}) %boldMagenta([%file : %line]) - %cyan(%msg%n)"/>
+
+    <!--文件大小，默认10MB-->
+    <property name="MAX_FILE_SIZE" value="50MB" />
+
+    <!-- 配置日志的滚动时间 ，表示只保留最近 几 天的日志-->
+    <property name="MAX_HISTORY" value="1"/>
+
+
+    <!--=================================================分割线=================================================-->
+
+    <!--输出到控制台-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 输出的日志内容格式化-->
+        <encoder>
+            <pattern>${OUTPUT_FORMAT_COLOR}</pattern>
+            <charset>${LOG_CHARSET}</charset>
+        </encoder>
+    </appender>
+
+    <!--输出到log文件-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日志文件路径，日志文件名称-->
+        <File>${LOG_HOME}/${LOG_PREFIX}.log</File>
+        <!--格式化-->
+        <encoder>
+            <pattern>${OUTPUT_FORMAT}</pattern>
+            <charset>${LOG_CHARSET}</charset>
+        </encoder>
+        <!-- 设置滚动策略，当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候进行切割， 默认10MB -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件路径，新的 ALL 日志文件名称，“ i ” 是个变量 -->
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/${LOG_PREFIX}%i.log</fileNamePattern>
+            <!--保留天数-->
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <!--当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候，新的内容写入新的文件， 默认10MB-->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!--<appender name="TEST_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        &lt;!&ndash;日志文件路径，日志文件名称&ndash;&gt;
+        <File>${LOG_HOME}/${LOG_PREFIX}_test.log</File>
+        &lt;!&ndash;格式化&ndash;&gt;
+        <encoder>
+            <pattern>${OUTPUT_FORMAT}</pattern>
+            <charset>${LOG_CHARSET}</charset>
+        </encoder>
+        &lt;!&ndash;设置滚动策略，当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候进行切割， 默认10MB&ndash;&gt;
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash;日志文件路径，新的 ALL 日志文件名称，“ i ” 是个变量&ndash;&gt;
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/${LOG_PREFIX}_test%i.log</fileNamePattern>
+            &lt;!&ndash;保留天数&ndash;&gt;
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            &lt;!&ndash;当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候，新的内容写入新的文件， 默认10MB&ndash;&gt;
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>-->
+
+    <!--<appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        &lt;!&ndash; 下面为配置只输出error级别的日志 &ndash;&gt;
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            &lt;!&ndash;拒绝不匹配的&ndash;&gt;
+            <OnMismatch>DENY</OnMismatch>
+            &lt;!&ndash;接受匹配&ndash;&gt;
+            <OnMatch>ACCEPT</OnMatch>
+        </filter>
+        &lt;!&ndash;日志文件路径，日志文件名称&ndash;&gt;
+        <File>${LOG_HOME}/err_${LOG_PREFIX}.log</File>
+        &lt;!&ndash;格式化&ndash;&gt;
+        <encoder>
+            <pattern>${OUTPUT_FORMAT}</pattern>
+            <charset>${LOG_CHARSET}</charset>
+        </encoder>
+        &lt;!&ndash; 设置滚动策略，当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候进行切割， 默认10MB &ndash;&gt;
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash;日志文件路径，新的 ALL 日志文件名称，“ i ” 是个变量 &ndash;&gt;
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/err_${LOG_PREFIX}%i.log</fileNamePattern>
+            &lt;!&ndash;保留天数&ndash;&gt;
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            &lt;!&ndash;当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候，新的内容写入新的文件， 默认10MB&ndash;&gt;
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>-->
+
+    <!--=================================================分割线=================================================-->
+
+
+    <!--指定包或者类的日志配置-->
+    <!-- 自定义配置__配置业务日志输出至单独的日志文件中 -->
+    <!--添加 additivity="false" 不会引用全局配置，即不会添加到root中-->
+    <!--<logger name="com.lzk.videmo.controller.TestController" level="INFO" additivity="false">
+        &lt;!&ndash;引用自定义的appender&ndash;&gt;
+        <appender-ref ref="TEST_FILE"/>
+        &lt;!&ndash;这里也引用控制台appender，才能在控制台中看到日志&ndash;&gt;
+        <appender-ref ref="CONSOLE"/>
+    </logger>-->
+
+
+    <!--=================================================分割线=================================================-->
+
+
+    <!--设置只输出单个级别-->
+    <!--<logger name="com.lzk.videmo.controller.ViController" level="ERROR">
+
+    </logger>-->
+
+
+    <!--=================================================分割线=================================================-->
+
+
+    <!-- 将我们新增的配置添加进root中统一设置输出级别 -->
+    <root level="${LOG_ROOT_LEVEL}">
+        <appender-ref ref="CONSOLE"/>
+        <!--<appender-ref ref="FILE"/>-->
+        <!--<appender-ref ref="ERROR_FILE"/>-->
+    </root>
+
+</configuration>
