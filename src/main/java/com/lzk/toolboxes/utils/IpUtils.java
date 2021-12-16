@@ -40,7 +40,18 @@ public class IpUtils {
             ip = request.getRemoteAddr();
         }
 
-        return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
+        if("0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)){
+            return getHostIp();
+        }
+
+        //对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
+        if (ip != null && ip.length() > 15) { //"***.***.***.***".length() = 15
+            if (ip.indexOf(",") > 0) {
+                ip = ip.substring(0, ip.indexOf(","));
+            }
+        }
+
+        return ip;
     }
 
     public static boolean internalIp(String ip) {
@@ -148,6 +159,7 @@ public class IpUtils {
         return bytes;
     }
 
+    //根据网卡取本机配置的IP
     public static String getHostIp() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
@@ -162,6 +174,11 @@ public class IpUtils {
         } catch (UnknownHostException e) {
         }
         return "未知";
+    }
+
+    public static void main(String[] args) {
+        String hostIp = IpUtils.getHostIp();
+        System.out.println(hostIp);
     }
 
 }
