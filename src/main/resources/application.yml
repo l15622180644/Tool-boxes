@@ -61,3 +61,8 @@ mybatis-plus:
 
 # 跨域配置
 originAllow: '*'
+
+#上传
+upload:
+  uploadPath: D:/File
+  videoPath: D:/Videos

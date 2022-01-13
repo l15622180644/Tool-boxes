@@ -29,7 +29,7 @@ import java.util.List;
 public class CodeGenerator {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final String PARENT_PACKAGE = "com.lzk.codegenerator";  //项目包名
+    private final String PARENT_PACKAGE = "com.zt";  //项目包名
     private final String PARENT_PATH = "com/lzk/codegenerator";
     private final String OUTPUT_PATH = "E:/lzk/代码生成"; //落地路径
     private final String PROJECT_PATH = "/gen";
@@ -52,10 +52,10 @@ public class CodeGenerator {
     //    zip文件名
     private final String ZIP_NAME = "gen.zip";
     //    数据源
-    private final String url = "jdbc:mysql://localhost:3306/test?useSSL=false&Unicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&allowPublicKeyRetrieval=true";
+    private final String url = "jdbc:mysql://172.16.127.69:3306/car_applet?useSSL=false&Unicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&allowPublicKeyRetrieval=true";
     private final String driver = "com.mysql.cj.jdbc.Driver";
     private final String userName = "root";
-    private final String password = "123456";
+    private final String password = "qweasd";
 
 
     public void genCode(String tableName, boolean isZip, boolean isDown) throws Exception {
@@ -115,15 +115,13 @@ public class CodeGenerator {
         generator.execute();
         if (isExist(OUTPUT_PATH, ROOT_PATH1) && isZip) {
             log.info("开始压缩...");
-            FileZip.zip(OUTPUT_PATH + PROJECT_PATH, OUTPUT_PATH + "/" + ZIP_NAME);
+            ZipUtils.zip(OUTPUT_PATH + PROJECT_PATH, OUTPUT_PATH + "/" + ZIP_NAME);
             log.info("压缩完成");
             if (isDown) {
                 BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(OUTPUT_PATH + "/" + ZIP_NAME));
                 byte[] bytes = new byte[1024];
                 HttpServletResponse response = ServletUtil.getResponse();
-                response.setContentType("application/x-msdownload");
-                response.setHeader("Access-Control-Allow-Origin", "*");
-                response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(ZIP_NAME, "UTF-8"));
+                ServletUtil.setDownloadHead(response,ZIP_NAME);
                 ServletOutputStream out = response.getOutputStream();
                 int len = 0;
                 while ((len = inputStream.read(bytes)) > 0)
