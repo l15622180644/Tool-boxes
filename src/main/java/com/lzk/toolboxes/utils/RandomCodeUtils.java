@@ -133,7 +133,7 @@ public class RandomCodeUtils {
      * @param len 字符串长度，不能小于3
      * @return String 随机字符串
      */
-    public static String randomStr(int len){
+    public static String randomOfNumLetter(int len){
         if(len < 3){
             throw new IllegalArgumentException("字符串长度不能小于3");
         }

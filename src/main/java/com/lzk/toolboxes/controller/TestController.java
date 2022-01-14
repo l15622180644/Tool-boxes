@@ -1,9 +1,11 @@
 package com.lzk.toolboxes.controller;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
+import cn.hutool.captcha.generator.CodeGenerator;
+import cn.hutool.captcha.generator.RandomGenerator;
 import com.lzk.toolboxes.entity.Message;
-import com.lzk.toolboxes.utils.IpUtils;
-import com.lzk.toolboxes.utils.PdfToImageUtil;
-import com.lzk.toolboxes.utils.UuidUtil;
+import com.lzk.toolboxes.utils.*;
 import com.lzk.toolboxes.utils.excel.ExcelUtil;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +60,7 @@ public class TestController {
 
     @RequestMapping("/getMyIP")
     public String getMyIP(HttpServletRequest request){
-        return UuidUtil.get32UUID();
+        return IpUtils.getIpAddr(request);//172.16.129.149
     }
 
     @PostMapping("/pdfToImage")
@@ -74,5 +80,18 @@ public class TestController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @RequestMapping("/captcha")
+    public void captcha(HttpServletResponse response){
+        response.setContentType("image/png");
+        try (ServletOutputStream outputStream = response.getOutputStream()){
+            Image image = CaptchaUtils.create(200, 100, RandomCodeUtils.getRandomCode(4));
+            ImageIO.write((BufferedImage)image,"png",outputStream);
+            outputStream.flush();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 }
