@@ -1,16 +1,8 @@
 package com.lzk.toolboxes.utils;
 
 
-import cn.hutool.captcha.CaptchaUtil;
-import cn.hutool.captcha.LineCaptcha;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,24 +13,30 @@ public class CaptchaUtils {
 
     private static final List<Color> myColorList = new ArrayList<>();
 
+    private static final Random random;
+
     static {
-        myColorList.add(new Color(255,255,204));
+        random = new Random();
         myColorList.add(Color.WHITE);
+        myColorList.add(new Color(255,255,204));
         myColorList.add(new Color(255,204,204));
         myColorList.add(new Color(204,255,255));
         myColorList.add(new Color(204,255,204));
         myColorList.add(new Color(204,255,204));
         myColorList.add(new Color(255,153,255));
+        myColorList.add(new Color(204,236,255));
+        myColorList.add(new Color(255,204,153));
+        myColorList.add(new Color(255,204,102));
     }
 
 
-    public static Image create(int width, int height, String code){
-        Random random = new Random();
+    public static BufferedImage create(int width, int height, String code){
         BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = (Graphics2D)image.getGraphics();
-        graphics.setColor(myColorList.get(random.nextInt(myColorList.size())));//设置画笔颜色-验证码背景色
+        Color backgroundColor = myColorList.get(random.nextInt(myColorList.size()));
+        graphics.setColor(backgroundColor);//设置画笔颜色-验证码背景色
         graphics.fillRect(0,0,width,height);//填充背景
-        graphics.setFont(new Font("微软雅黑",Font.BOLD,(int)((double)height * 0.75D)));
+        graphics.setFont(new Font("Algerian",Font.BOLD,(int)((double)height * 0.75D)));
 
         //VALUE_ANTIALIAS_ON：使用抗锯齿
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -49,14 +47,14 @@ public class CaptchaUtils {
         int len = chars.length;
         int charWidth = width / len;
         for(int i=0;i<len;i++){
-            graphics.setColor(getRandomColor(random));
+            graphics.setColor(getRandomColor());
             int x = i*charWidth;
             //设置字体旋转角度
             int degree = random.nextInt() % 30;  //角度小于30度
             //正向旋转
             graphics.rotate(degree * Math.PI / 180, x==0?0.5:x, y);
             graphics.drawString(String.valueOf(chars[i]), (float) (x==0?0.5:x), y);
-            //反向旋转
+            //反向旋转（会累计旋转 所以要转回去）
             graphics.rotate(-degree * Math.PI / 180, x==0?0.5:x, y);
         }
 
@@ -66,7 +64,7 @@ public class CaptchaUtils {
         //画干扰线
         for (int i=0; i<lines; i++) {
             // 设置随机颜色
-            graphics.setColor(getRandomColor(random));
+            graphics.setColor(getRandomColor());
             // 随机画线
             int x1 = random.nextInt(width);
             int y1 = random.nextInt(height);
@@ -79,9 +77,12 @@ public class CaptchaUtils {
         for(int i=0;i<noise;i++){
             int x1 = random.nextInt(width);
             int y1 = random.nextInt(height);
-            graphics.setColor(getRandomColor(random));
+            graphics.setColor(getRandomColor());
             graphics.fillRect(x1, y1, 2,2);
         }
+
+        //释放资源
+        graphics.dispose();
 
         return image;
     }
@@ -89,13 +90,13 @@ public class CaptchaUtils {
     /**
      * 随机取色
      */
-    private static Color getRandomColor(Random random) {
+    private static Color getRandomColor() {
         Color color = new Color(random.nextInt(256),
                 random.nextInt(256), random.nextInt(256));
         return color;
     }
 
-    public static int getCenterY(Graphics g, int backgroundHeight) {
+    private static int getCenterY(Graphics g, int backgroundHeight) {
         FontMetrics metrics = null;
         try {
             metrics = g.getFontMetrics();
@@ -110,11 +111,8 @@ public class CaptchaUtils {
         return y;
     }
 
-    public static void main(String[] args) throws IOException {
-        Image image = CaptchaUtils.create(200, 69, RandomCodeUtils.getRandomCode(4));
-        ImageIO.write((BufferedImage)image,"jpg",new FileOutputStream("E:\\lzk\\1.jpg"));
-        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
-        lineCaptcha.write("E:\\lzk\\2.jpg");
-    }
+
+
+
 
 }

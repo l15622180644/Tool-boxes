@@ -84,10 +84,10 @@ public class TestController {
 
     @RequestMapping("/captcha")
     public void captcha(HttpServletResponse response){
-        response.setContentType("image/png");
+        response.setContentType("image/jpg");
         try (ServletOutputStream outputStream = response.getOutputStream()){
-            Image image = CaptchaUtils.create(200, 100, RandomCodeUtils.getRandomCode(4));
-            ImageIO.write((BufferedImage)image,"png",outputStream);
+            BufferedImage image = CaptchaUtils.create(200, 100, RandomCodeUtils.getRandomCode(4));
+            ImageIO.write(image,"jpg",outputStream);
             outputStream.flush();
         } catch (IOException e){
             e.printStackTrace();
