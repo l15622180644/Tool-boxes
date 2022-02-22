@@ -106,11 +106,6 @@
             <artifactId>mybatis-plus-generator</artifactId>
             <version>3.4.1</version>
         </dependency>
-        <!--模板引擎-->
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-        </dependency>
 
         <!--lombok-->
         <dependency>
@@ -173,6 +168,7 @@
             <version>1.0-alpha1</version>
         </dependency>
 
+        <!--模板引擎-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
