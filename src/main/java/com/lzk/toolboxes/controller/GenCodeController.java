@@ -1,6 +1,7 @@
 package com.lzk.toolboxes.controller;
 
 import com.lzk.toolboxes.utils.CodeGenerator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,10 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GenCodeController {
 
-    @GetMapping("/gen/{table}")
-    public void genCode(@PathVariable("table") String table) throws Exception {
+    @GetMapping("/gen/{tableName}")
+    public void genCode(@PathVariable("tableName") String tableName) throws Exception {
+        if(StringUtils.isBlank(tableName)) return;
         CodeGenerator codeGenerator = new CodeGenerator();
-        codeGenerator.genCode(table, true, true);
+        codeGenerator.genCode(tableName, true, true);
     }
 
 }

@@ -1,10 +1,15 @@
 package com.lzk.toolboxes.utils;
 
+import com.alibaba.fastjson.JSONObject;
+import com.lzk.toolboxes.config.base.Status;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -77,6 +82,34 @@ public class ServletUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String getUserAgent(HttpServletRequest request) {
+        String ua = request.getHeader("User-Agent");
+        return ua != null ? ua : "";
+    }
+
+    public static void returnJSON(HttpServletResponse response, Status status) {
+        returnJSON(response,status,null);
+    }
+
+    public static void returnJSON(HttpServletResponse response, Status status, String msg) {
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("text/html; charset=utf-8");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", status.code());
+        jsonObject.put("msg", msg!=null?msg:status.msg());
+        String jsonString = jsonObject.toJSONString();
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+            writer.write(jsonString);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) writer.close();
+        }
     }
 
 

@@ -10,6 +10,4 @@ public class BaseBean extends Model {
 
     private static final long serialVersionUID = 1L;
 
-//    @TableField(exist = false)
-//    private Users user;
 }

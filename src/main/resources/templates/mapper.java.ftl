@@ -5,11 +5,10 @@ import ${superMapperClassPackage};
 
 /**
  *
- * ${table.comment!}
- *
- * @author ${author}
+ * @author
  * @since ${date}
  */
+
 <#if kotlin>
 interface ${table.mapperName} : ${superMapperClass}<${entity}>
 <#else>

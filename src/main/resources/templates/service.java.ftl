@@ -2,31 +2,31 @@ package ${package.Service};
 
 import ${package.Entity}.${entity};
 import ${superServiceClassPackage};
-import com.lzk.codegenerator.common.base.BaseParam;
+import ${package.Entity?substring(0,(package.Entity?last_index_of(".")))}.common.base.BaseParam;
+import ${package.Entity?substring(0,(package.Entity?last_index_of(".")))}.common.base.BaseResult;
 
 /**
  *
- * ${table.comment!}
- *
- * @author ${author}
+ * @author
  * @since ${date}
  */
+
 <#if kotlin>
 interface ${table.serviceName} : ${superServiceClass}<${entity}>
 <#else>
 public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
 
-    Page<${entity}> selectPage(BaseParam baseParam);
+    BaseResult get${entity}Page(BaseParam param);
 
-    ${entity} selectOne(Long id);
+    BaseResult get${entity}One(BaseParam param);
 
-    boolean add(${entity} ${entity?uncap_first});
+    BaseResult add${entity}(${entity} ${entity?uncap_first});
 
-    boolean modify(${entity} ${entity?uncap_first});
+    BaseResult update${entity}(${entity} ${entity?uncap_first});
 
-    boolean del(Long id);
+    BaseResult del${entity}(BaseParam param);
 
-    boolean bathDel(List ids);
+    BaseResult bathDel${entity}(BaseParam param);
 
 }
 </#if>

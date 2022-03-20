@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,8 +31,8 @@ import java.util.List;
 public class CodeGenerator {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final String PARENT_PACKAGE = "com.zt";  //项目包名
-    private final String PARENT_PATH = "com/lzk/codegenerator";
+    private final String PARENT_PACKAGE = "com.zt.myframeworkspringboot";  //项目包名
+    private final String PARENT_PATH = "com/zt/myframeworkspringboot";
     private final String OUTPUT_PATH = "E:/lzk/代码生成"; //落地路径
     private final String PROJECT_PATH = "/gen";
     private final String ROOT_PATH1 = PROJECT_PATH + "/src/main/java/";
@@ -52,13 +54,14 @@ public class CodeGenerator {
     //    zip文件名
     private final String ZIP_NAME = "gen.zip";
     //    数据源
-    private final String url = "jdbc:mysql://172.16.127.69:3306/car_applet?useSSL=false&Unicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&allowPublicKeyRetrieval=true";
+    private final String url = "jdbc:mysql://127.0.0.1:3306/my-framework?useSSL=false&Unicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&allowPublicKeyRetrieval=true";
     private final String driver = "com.mysql.cj.jdbc.Driver";
     private final String userName = "root";
-    private final String password = "qweasd";
+    private final String password = "123456";
 
 
     public void genCode(String tableName, boolean isZip, boolean isDown) throws Exception {
+        if(StringUtils.isBlank(tableName)) return;
 //        生成器
         AutoGenerator generator = new AutoGenerator();
 //        设置模板引擎
@@ -81,12 +84,11 @@ public class CodeGenerator {
         generator.setDataSource(dataSource);
 //        策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude(tableName) //需要生成的表名
-                .setNaming(NamingStrategy.underline_to_camel) //实体命名方式,根据表名下划线驼峰命名
+        strategy.setNaming(NamingStrategy.underline_to_camel) //实体命名方式,根据表名下划线驼峰命名
                 .setColumnNaming(NamingStrategy.underline_to_camel) //实体属性命名方式
                 .setEntityLombokModel(true) //实体使用lombok
                 .setRestControllerStyle(true); //控制器使用restController注解
-
+        Arrays.asList(tableName.split(",")).forEach(v->strategy.setInclude(v));//需要生成的表名
         generator.setStrategy(strategy);
 //        包配置
         PackageConfig packageConfig = new PackageConfig();

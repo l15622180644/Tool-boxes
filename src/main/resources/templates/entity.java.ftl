@@ -16,12 +16,12 @@ import lombok.experimental.Accessors;
 </#if>
 
 /**
- *
  * ${table.comment!}
  *
- * @author ${author}
+ * @author
  * @since ${date}
  */
+
 <#if entityLombokModel>
 @Data
     <#if superEntityClass??>

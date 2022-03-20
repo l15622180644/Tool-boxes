@@ -3,16 +3,19 @@ package ${package.ServiceImpl};
 import ${package.Entity}.${entity};
 import ${package.Mapper}.${table.mapperName};
 import ${package.Service}.${table.serviceName};
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ${superServiceImplClassPackage};
 import org.springframework.stereotype.Service;
+import ${package.Entity?substring(0,(package.Entity?last_index_of(".")))}.common.base.BaseParam;
+import ${package.Entity?substring(0,(package.Entity?last_index_of(".")))}.common.base.BaseResult;
+import ${package.Entity?substring(0,(package.Entity?last_index_of(".")))}.common.status.Status;
 
 /**
  *
- * ${table.comment!}
- *
- * @author ${author}
+ * @author
  * @since ${date}
  */
+
 @Service
 <#if kotlin>
 open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>(), ${table.serviceName} {
@@ -22,35 +25,38 @@ open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperNam
 public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}> implements ${table.serviceName} {
 
     @Override
-    public Page<${entity}> selectPage(BaseParam baseParam){
-        Page<${entity}> page = lambdaQuery().page(baseParam.getPAGE(entityClass));
-        return page;
+    public BaseResult get${entity}Page(BaseParam baseParam){
+        Page<${entity}> page = lambdaQuery().page(baseParam.getPage(entityClass));
+        return BaseResult.returnResult(page);
     }
 
     @Override
-    public ${entity} selectOne(Long id){
-        ${entity} ${entity?uncap_first} = getById(id);
-        return ${entity?uncap_first};
+    public BaseResult get${entity}One(BaseParam param){
+        if (param.getId() == null) return BaseResult.error(Status.PARAMEXCEPTION);
+        return BaseResult.returnResult(getById(param.getId()));
     }
 
     @Override
-    public boolean add(${entity} ${entity?uncap_first}){
-        return save(${entity?uncap_first});
+    public BaseResult add${entity}(${entity} ${entity?uncap_first}){
+        return BaseResult.returnResult(save(${entity?uncap_first}),${entity?uncap_first}.getId());
     }
 
     @Override
-    public boolean modify(${entity} ${entity?uncap_first}){
-        return updateById(${entity?uncap_first});
+    public BaseResult update${entity}(${entity} ${entity?uncap_first}){
+        if (${entity?uncap_first}.getId() == null) return BaseResult.error(Status.PARAMEXCEPTION);
+        return BaseResult.returnResult(updateById(${entity?uncap_first}));
     }
 
     @Override
-    public boolean del(Long id){
-        return removeById(id);
+    public BaseResult del${entity}(BaseParam param){
+        if (param.getId() == null) return BaseResult.error(Status.PARAMEXCEPTION);
+        return BaseResult.returnResult(removeById(param.getId()));
     }
 
     @Override
-    public boolean bathDel(List ids){
-        return removeByIds(ids);
+    public BaseResult bathDel${entity}(BaseParam param){
+        if (param.getIds() == null || param.getIds().isEmpty()) return BaseResult.error(Status.PARAMEXCEPTION);
+        return BaseResult.returnResult(removeByIds(param.getIds()));
     }
 
 }
