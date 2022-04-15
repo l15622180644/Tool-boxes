@@ -25,8 +25,10 @@ open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperNam
 public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}> implements ${table.serviceName} {
 
     @Override
-    public BaseResult get${entity}Page(BaseParam baseParam){
-        Page<${entity}> page = lambdaQuery().page(baseParam.getPage(entityClass));
+    public BaseResult get${entity}Page(BaseParam param){
+        Page<${entity}> page = lambdaQuery()
+            .orderBy(true,param.getIsASCByCreateTime()!=null?param.getIsASCByCreateTime():false, ${entity}::getCreateTime)
+            .page(param.getPage(entityClass));
         return BaseResult.returnResult(page);
     }
 

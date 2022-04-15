@@ -14,6 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
     </#if>
 </#if>
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 
 /**
  * ${table.comment!}
@@ -73,23 +75,28 @@ public class ${entity} implements Serializable {
     @TableId("${field.annotationColumnName}")
         </#if>
         <#-- 普通字段 -->
-    <#elseif field.fill??>
-    <#-- -----   存在字段填充设置   ----->
+    <#--<#elseif field.fill??>
+    &lt;#&ndash; -----   存在字段填充设置   ---&ndash;&gt;
         <#if field.convert>
     @TableField(value = "${field.annotationColumnName}", fill = FieldFill.${field.fill})
         <#else>
     @TableField(fill = FieldFill.${field.fill})
         </#if>
     <#elseif field.convert>
-    @TableField("${field.annotationColumnName}")
+    @TableField("${field.annotationColumnName}")-->
     </#if>
     <#-- 乐观锁注解 -->
-    <#if (versionFieldName!"") == field.name>
+    <#--<#if (versionFieldName!"") == field.name>
     @Version
     </#if>
-    <#-- 逻辑删除注解 -->
+    &lt;#&ndash; 逻辑删除注解 &ndash;&gt;
     <#if (logicDeleteFieldName!"") == field.name>
     @TableLogic
+    </#if>-->
+    <#if field.propertyName=="createTime">
+    @TableField(fill = FieldFill.INSERT)
+    <#elseif field.propertyName=="updateTime">
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     </#if>
     private ${field.propertyType} ${field.propertyName};
 </#list>

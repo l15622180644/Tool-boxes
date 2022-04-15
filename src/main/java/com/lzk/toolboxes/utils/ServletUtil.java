@@ -89,11 +89,12 @@ public class ServletUtil {
         return ua != null ? ua : "";
     }
 
-    public static void returnJSON(HttpServletResponse response, Status status) {
-        returnJSON(response,status,null);
+    public static void returnJSON(Status status) {
+        returnJSON(status,null);
     }
 
-    public static void returnJSON(HttpServletResponse response, Status status, String msg) {
+    public static void returnJSON(Status status, String msg) {
+        HttpServletResponse response = getResponse();
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=utf-8");
         JSONObject jsonObject = new JSONObject();

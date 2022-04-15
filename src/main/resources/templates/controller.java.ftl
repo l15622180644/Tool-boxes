@@ -13,9 +13,10 @@ import javax.annotation.Resource;
 <#if superControllerClassPackage??>
 import ${superControllerClassPackage};
 </#if>
-import ${package.Service}.${table.serviceName}
+import ${package.Service}.${table.serviceName};
 import ${package.Entity?substring(0,(package.Entity?last_index_of(".")))}.common.base.BaseParam;
 import ${package.Entity?substring(0,(package.Entity?last_index_of(".")))}.common.base.BaseResult;
+import ${package.Entity?substring(0,(package.Entity?last_index_of(".")))}.common.annotation.Log;
 
 /**
  *
@@ -63,6 +64,7 @@ public class ${table.controllerName} {
      */
     @PostMapping("/add${entity}")
     @Transactional
+    @Log(module = "",content = "新增",type = Log.INSERT)
     public BaseResult add(@RequestBody ${entity} ${entity?uncap_first}){
         return ${table.serviceName?uncap_first}.add${entity}(${entity?uncap_first});
     }
@@ -72,6 +74,7 @@ public class ${table.controllerName} {
      */
     @PostMapping("/update${entity}")
     @Transactional
+    @Log(module = "",content = "修改",type = Log.UPDATE)
     public BaseResult update(@RequestBody ${entity} ${entity?uncap_first}){
         return ${table.serviceName?uncap_first}.update${entity}(${entity?uncap_first});
     }
@@ -81,6 +84,7 @@ public class ${table.controllerName} {
      */
     @PostMapping("/del${entity}")
     @Transactional
+    @Log(module = "",content = "删除",type = Log.DELETE)
     public BaseResult del(@RequestBody BaseParam param){
         return ${table.serviceName?uncap_first}.del${entity}(param);
     }
@@ -90,6 +94,7 @@ public class ${table.controllerName} {
      */
     @PostMapping("/bathDel${entity}")
     @Transactional
+    @Log(module = "",content = "批量删除",type = Log.DELETE)
     public BaseResult bathDel(@RequestBody BaseParam param){
         return ${table.serviceName?uncap_first}.bathDel${entity}(param);
     }
