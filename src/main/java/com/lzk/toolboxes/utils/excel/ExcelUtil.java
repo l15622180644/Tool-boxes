@@ -187,6 +187,8 @@ public class ExcelUtil {
             if (o != null && !"".equals(o)) {
                 cell.setCellValue((Double) o);
             }
+        } else if (o != null) {
+            cell.setCellValue(o.toString());
         }
         if (!"".equals(annotation.readConverterExp()) && o != null) {
             String convertSource = annotation.readConverterExp();
