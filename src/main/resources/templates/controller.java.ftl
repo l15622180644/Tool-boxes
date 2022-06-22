@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.stereotype.Controller;
 </#if>-->
 import javax.annotation.Resource;
+import java.util.List;
 <#if superControllerClassPackage??>
 import ${superControllerClassPackage};
 </#if>
@@ -47,7 +48,7 @@ public class ${table.controllerName} {
      * 查询列表
      */
     @PostMapping("/get${entity}Page")
-    public BaseResult getPage(@RequestBody BaseParam param){
+    public BaseResult<List<${entity}>> getPage(@RequestBody BaseParam param){
         return ${table.serviceName?uncap_first}.get${entity}Page(param);
     }
 
@@ -55,7 +56,7 @@ public class ${table.controllerName} {
      * 获取详情
      */
     @PostMapping("/get${entity}One")
-    public BaseResult getOne(@RequestBody BaseParam param){
+    public BaseResult<${entity}> getOne(@RequestBody BaseParam param){
         return ${table.serviceName?uncap_first}.get${entity}One(param);
     }
 
@@ -65,7 +66,7 @@ public class ${table.controllerName} {
     @PostMapping("/add${entity}")
     @Transactional
     @Log(module = "",content = "新增",type = Log.INSERT)
-    public BaseResult add(@RequestBody ${entity} ${entity?uncap_first}){
+    public BaseResult<Boolean> add(@RequestBody ${entity} ${entity?uncap_first}){
         return ${table.serviceName?uncap_first}.add${entity}(${entity?uncap_first});
     }
 
@@ -75,7 +76,7 @@ public class ${table.controllerName} {
     @PostMapping("/update${entity}")
     @Transactional
     @Log(module = "",content = "修改",type = Log.UPDATE)
-    public BaseResult update(@RequestBody ${entity} ${entity?uncap_first}){
+    public BaseResult<Boolean> update(@RequestBody ${entity} ${entity?uncap_first}){
         return ${table.serviceName?uncap_first}.update${entity}(${entity?uncap_first});
     }
 
@@ -85,7 +86,7 @@ public class ${table.controllerName} {
     @PostMapping("/del${entity}")
     @Transactional
     @Log(module = "",content = "删除",type = Log.DELETE)
-    public BaseResult del(@RequestBody BaseParam param){
+    public BaseResult<Boolean> del(@RequestBody BaseParam param){
         return ${table.serviceName?uncap_first}.del${entity}(param);
     }
 
@@ -95,7 +96,7 @@ public class ${table.controllerName} {
     @PostMapping("/bathDel${entity}")
     @Transactional
     @Log(module = "",content = "批量删除",type = Log.DELETE)
-    public BaseResult bathDel(@RequestBody BaseParam param){
+    public BaseResult<Boolean> bathDel(@RequestBody BaseParam param){
         return ${table.serviceName?uncap_first}.bathDel${entity}(param);
     }
 

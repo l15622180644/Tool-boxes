@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -167,7 +168,7 @@ public class ExcelUtil {
         Object o = getValue(field, object);
         if (genericType.equals("class java.lang.String")) {
             cell.setCellValue((String) o);
-        } else if (genericType.equals("class java.lang.Double")) {
+        } else if (genericType.equals("class java.lang.Double") || genericType.equals("double")) {
             if (o != null && !"".equals(o)) {
                 cell.setCellValue((Double) o);
             }
@@ -175,17 +176,11 @@ public class ExcelUtil {
             if (o != null && !"".equals(o)) {
                 cell.setCellValue((Boolean) o);
             }
-        } else if (genericType.equals("class java.lang.Integer")) {
+        } else if (genericType.equals("class java.lang.Integer")
+                || genericType.equals("class java.lang.Long")
+                || genericType.equals("class java.lang.Float")) {
             if (o != null && !"".equals(o)) {
                 cell.setCellValue(Double.parseDouble(o.toString()));
-            }
-        } else if (genericType.equals("class java.lang.Long")) {
-            if (o != null && !"".equals(o)) {
-                cell.setCellValue(Double.parseDouble(getValue(field, object).toString()));
-            }
-        } else if (genericType.equals("double")) {
-            if (o != null && !"".equals(o)) {
-                cell.setCellValue((Double) o);
             }
         } else if (o != null) {
             cell.setCellValue(o.toString());
@@ -199,6 +194,11 @@ public class ExcelUtil {
                     cell.setCellValue(strings[1]);
                 }
             }
+        }else if(!"".equals(annotation.formatTimestamp()) && o !=null){
+            SimpleDateFormat format = new SimpleDateFormat(annotation.formatTimestamp());
+            Date date = new Date();
+            date.setTime(Long.parseLong(o.toString()+(o.toString().length()==10?"000":"")));
+            cell.setCellValue(format.format(date));
         }
     }
 

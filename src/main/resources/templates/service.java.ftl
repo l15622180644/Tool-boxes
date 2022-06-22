@@ -18,15 +18,15 @@ public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
 
     BaseResult get${entity}Page(BaseParam param);
 
-    BaseResult get${entity}One(BaseParam param);
+    BaseResult<${entity}> get${entity}One(BaseParam param);
 
-    BaseResult add${entity}(${entity} ${entity?uncap_first});
+    BaseResult<Boolean> add${entity}(${entity} ${entity?uncap_first});
 
-    BaseResult update${entity}(${entity} ${entity?uncap_first});
+    BaseResult<Boolean> update${entity}(${entity} ${entity?uncap_first});
 
-    BaseResult del${entity}(BaseParam param);
+    BaseResult<Boolean> del${entity}(BaseParam param);
 
-    BaseResult bathDel${entity}(BaseParam param);
+    BaseResult<Boolean> bathDel${entity}(BaseParam param);
 
 }
 </#if>

@@ -15,4 +15,6 @@ public @interface ExcelField {
     boolean isExport() default true;
     //内容表达转换 (如: 0=男,1=女,2=未知)
     String readConverterExp() default "";
+    //格式化时间戳
+    String formatTimestamp() default "";
 }
