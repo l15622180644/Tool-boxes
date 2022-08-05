@@ -24,20 +24,22 @@ public class TreeUtils {
      * @param rootFlag      根节点标记
      * @return
      */
-    public static List<JSONObject> listToTree(String jsonArray,String pidName,String idName,String childName,String sortName,long rootFlag){
+    public static <T> List<T> listToTree(Class<T> tClass,String jsonArray, String pidName, String idName, String childName, String sortName, long rootFlag){
         Map<String,Object> map = new HashMap<>();
         map.put("sortName",sortName);
         threadLocal.set(map);
         List<JSONObject> list = JSONArray.parseArray(jsonArray).toJavaList(JSONObject.class);
         List<JSONObject> rootList = getRootList(list, pidName, rootFlag);
+        List<T> convertList = new ArrayList<>();
         rootList.forEach(v->{
             v.put(childName,getChildren(v.getLong(idName),list,pidName,idName,childName));
+            convertList.add(v.toJavaObject(tClass));
         });
-        return rootList;
+        return convertList;
     }
 
 
-    private static List<JSONObject> getChildren(Long pid,List<JSONObject> list,String pidName,String idName,String childName){
+    private static List<JSONObject> getChildren(Long pid, List<JSONObject> list, String pidName, String idName, String childName){
         List<JSONObject> children = new ArrayList<>();
         Iterator<JSONObject> iterator = list.iterator();
         threadLocal.get().put("iterator",iterator);
@@ -53,7 +55,7 @@ public class TreeUtils {
         return threadLocal.get().get("sortName")!=null?children.stream().sorted(Comparator.comparing(TreeUtils::comparingBySortName)).collect(Collectors.toList()):children;
     }
 
-    private static List<JSONObject> getRootList(List<JSONObject> list,String pidName,long rootFlag){
+    private static List<JSONObject> getRootList(List<JSONObject> list, String pidName, long rootFlag){
         List<JSONObject> rootList = new ArrayList<>();
         Iterator<JSONObject> iterator = list.iterator();
         while (iterator.hasNext()){
