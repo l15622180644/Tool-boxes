@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, "createTime", () -> TimeHelper.getCurrentTime10(), Long.class);
+        this.strictUpdateFill(metaObject, "createTime", TimeHelper::getCurrentTime10, Long.class);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, "updateTime", () -> TimeHelper.getCurrentTime10(), Long.class);
+        this.strictUpdateFill(metaObject, "updateTime", TimeHelper::getCurrentTime10, Long.class);
     }
 }
