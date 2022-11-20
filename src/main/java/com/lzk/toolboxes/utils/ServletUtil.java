@@ -98,8 +98,8 @@ public class ServletUtil {
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=utf-8");
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", status.code());
-        jsonObject.put("msg", msg!=null?msg:status.msg());
+        jsonObject.put("code", status.getCode());
+        jsonObject.put("msg", msg!=null?msg:status.getMsg());
         String jsonString = jsonObject.toJSONString();
         PrintWriter writer = null;
         try {

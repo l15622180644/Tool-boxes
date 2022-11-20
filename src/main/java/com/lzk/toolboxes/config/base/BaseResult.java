@@ -6,10 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.io.Serializable;
 
-public class BaseResult implements Serializable {
-    /**
-     *
-     */
+public class BaseResult<T> implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     private Long id;
@@ -20,7 +18,7 @@ public class BaseResult implements Serializable {
 
     private int code;
 
-    private Object data;
+    private T data;
 
     public Long getId() {
         return id;
@@ -30,17 +28,12 @@ public class BaseResult implements Serializable {
         this.id = id;
     }
 
-    public void setResult(Object data) {
-        this.data = data;
-    }
-
     public String getMsg() {
         return msg;
     }
 
-    public BaseResult setMsg(String msg) {
+    public void setMsg(String msg) {
         this.msg = msg;
-        return this;
     }
 
     public int getCount() {
@@ -59,43 +52,66 @@ public class BaseResult implements Serializable {
         this.code = code;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
+    public BaseResult(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
 
     public BaseResult(Status resultStatus) {
-        this.code = resultStatus.code();
-        this.msg = resultStatus.msg();
+        this.code = resultStatus.getCode();
+        this.msg = resultStatus.getMsg();
     }
 
-    public BaseResult(Status resultStatus, Object data) {
-        this.code = resultStatus.code();
-        this.msg = resultStatus.msg();
+    public BaseResult(Status resultStatus, T data) {
+        this.code = resultStatus.getCode();
+        this.msg = resultStatus.getMsg();
         this.data = data;
+    }
+
+    public BaseResult(Status resultStatus, T data, Long id) {
+        this.code = resultStatus.getCode();
+        this.msg = resultStatus.getMsg();
+        this.data = data;
+        this.id = id;
     }
 
     public BaseResult(Status resultStatus, Page page) {
-        this.code = resultStatus.code();
-        this.msg = resultStatus.msg();
-        this.data = page.getRecords();
+        this.code = resultStatus.getCode();
+        this.msg = resultStatus.getMsg();
+        this.data = (T)page.getRecords();
         this.count = longToInt(page.getTotal());  //总数据量
     }
 
-
-    public static BaseResult success(int flag) {
-        return flag == 1 ? new BaseResult(Status.OPSUCCESS, flag) : new BaseResult(Status.OPFAIL, flag);
+    public BaseResult(Status resultStatus, String msg){
+        this.code = resultStatus.getCode();
+        this.msg = msg;
     }
 
-    public static BaseResult success(boolean flag){
+    public static <T> BaseResult<T> returnResult(int flag) {
+        return flag == 1 ? new BaseResult(Status.OPSUCCESS, true) : new BaseResult(Status.OPFAIL, false);
+    }
+
+    public static <T> BaseResult<T> returnResult(boolean flag){
         return flag == true ? new BaseResult(Status.OPSUCCESS,flag) : new BaseResult(Status.OPFAIL,flag);
     }
 
-    public static BaseResult success(Object data) {
+    public static <T> BaseResult<T> returnResult(int flag,Long id) {
+        return flag == 1 ? new BaseResult(Status.OPSUCCESS, true,id) : new BaseResult(Status.OPFAIL, false);
+    }
+
+    public static <T> BaseResult<T> returnResult(boolean flag,Long id){
+        return flag == true ? new BaseResult(Status.OPSUCCESS,flag,id) : new BaseResult(Status.OPFAIL,flag);
+    }
+
+    public static <T> BaseResult<T> returnResult(T data) {
         if (data instanceof Page) {
             Page page = (Page) data;
             return page.getRecords() == null ? new BaseResult(Status.FAIL) : new BaseResult(Status.SUCCESS, page);
@@ -103,13 +119,32 @@ public class BaseResult implements Serializable {
         return data == null ? new BaseResult(Status.FAIL) : new BaseResult(Status.SUCCESS, data);
     }
 
-    public static BaseResult success(){
+    public static <T> BaseResult<T> returnResult(Status status,T data) {
+        return new BaseResult(status,data);
+    }
+
+    public static <T> BaseResult<T> success(){
         return new BaseResult(Status.SUCCESS);
     }
 
-
-    public static BaseResult error(Status status) {
+    public static <T> BaseResult<T> success(Status status){
         return new BaseResult(status);
+    }
+
+    public static <T> BaseResult<T> success(String msg){
+        return new BaseResult(Status.OPSUCCESS,msg);
+    }
+
+    public static <T> BaseResult<T> error(Status status) {
+        return new BaseResult(status);
+    }
+
+    public static <T> BaseResult<T> error(Status status,String msg) {
+        return new BaseResult(status,msg);
+    }
+
+    public static <T> BaseResult<T> error(String msg) {
+        return new BaseResult(Status.OPFAIL,msg);
     }
 
     private int longToInt(long size) {

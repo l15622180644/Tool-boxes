@@ -1,22 +1,19 @@
-package com.lzk.toolboxes.utils.easyExcel.converter;
+package com.lzk.toolboxes.utils.excel.converter;
 
 import com.alibaba.excel.converters.Converter;
-import com.alibaba.excel.converters.ReadConverterContext;
 import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * @author
  * @module
- * @date 2022/8/8 16:18
+ * @date 2022/11/2 10:51
  */
-public class TimeStampConverter implements Converter<Long> {
+public class LongToStrConverter implements Converter<Long> {
+
 
     @Override
     public Class<?> supportJavaTypeKey() {
@@ -30,19 +27,17 @@ public class TimeStampConverter implements Converter<Long> {
 
     @Override
     public WriteCellData<?> convertToExcelData(Long value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
-        return new WriteCellData<String>(new SimpleDateFormat("yyyy-MM-dd").format(new Date(value)));
+        return new WriteCellData<String>(value.toString());
     }
 
     @Override
     public Long convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
-        System.out.println(cellData.getStringValue());
-        System.out.println(cellData.getBooleanValue());
-        System.out.println(cellData.getDataFormatData());
-        System.out.println(cellData.getNumberValue());
-        System.out.println(cellData.getFormulaData());
-        System.out.println(cellData.getType().name());
-        return new SimpleDateFormat("yyyy-MM-dd").parse(cellData.getStringValue()).getTime()/1000;
+        if(cellData.getType().equals(CellDataTypeEnum.STRING)){
+            return Long.parseLong(cellData.getStringValue());
+        }else if(cellData.getType().equals(CellDataTypeEnum.NUMBER)){
+            return cellData.getNumberValue().longValue();
+        }else {
+            throw new RuntimeException("Long类型转换异常");
+        }
     }
-
-
 }

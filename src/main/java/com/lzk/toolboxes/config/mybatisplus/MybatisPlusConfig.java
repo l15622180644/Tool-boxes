@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2021/6/19 11:17
  */
 @Configuration
-@MapperScan("")
+@MapperScan("com.lzk.toolboxes.mapper")
 public class MybatisPlusConfig {
 
     /**
@@ -36,5 +36,9 @@ public class MybatisPlusConfig {
         return interceptor;
     }
 
+    @Bean
+    public MySqlInjector sqlInjector(){
+        return new MySqlInjector();
+    }
 
 }
