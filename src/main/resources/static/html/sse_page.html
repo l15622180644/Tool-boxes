@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE-DEMO</title>
+</head>
+<style>
+    .style1{
+        position: absolute;
+        left: 50%;
+        -webkit-transform: translateX(-50%) translateY(-50%);
+        -moz-transform: translateX(-50%) translateY(-50%);
+        -ms-transform: translateX(-50%) translateY(-50%);
+        -o-transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
+        top: 50%;
+    }
+    .style2{
+        width: 100px;
+        height: 50px;
+    }
+</style>
+<body>
+    <ul class="style1">
+        <li>Server Send Event</li>
+        <li><button class="style2" onclick="connectSSE()">连接</button></li>
+        <li><button class="style2" onclick="closeSSE()">关闭</button></li>
+    </ul>
+</body>
+<script src="../js/jquery-1.8.3.js"></script>
+<!--该资源可让EventSource携带自定义请求头，也可兼容IE-->
+<script src="../js/eventsource.js"></script>
+<script>
+    var source = null;
+
+    function connectSSE() {
+        source = new EventSourcePolyfill('http://localhost:5203/sse/connect/1',{
+            headers: {
+                'Authorization': 'abc'
+            }
+        });
+        /**
+         * 连接建立后回调
+         */
+        source.onopen = function (event) {
+
+        };
+        /**
+         * 服务器向客户端发送数据回调
+         */
+        source.onmessage = function (event) {
+            console.info(event.data);
+        };
+        /**
+         * 异常回调
+         */
+        source.onerror = function (error) {
+            console.info(error);
+        }
+    }
+
+    function closeSSE() {
+        $.ajax({
+            url: 'http://localhost:5203/sse/end/1',
+            type: 'GET'
+        });
+        console.info(source!=null);
+        if(source!=null){
+            source.close();
+            source = null;
+        }
+    }
+
+    /*function connectSSE() {
+        if (window.EventSource) {
+            // 建立连接
+            source = new EventSource('http://localhost:5203/sse/connect/1');
+
+            /!**
+             * 连接一旦建立，就会触发open事件
+             *!/
+            source.onopen = function(event){
+
+            };
+            /!**
+             * 客户端收到服务器发来的数据
+             *!/
+            source.onmessage = function(event){
+                console.info(event.data);
+            };
+            source.onerror = function(event){
+                console.info(event);
+            }
+        } else {
+            console.info("连接失败");
+        }
+    }
+
+    function closeSSE() {
+        $.ajax({
+            url: 'http://localhost:5203/sse/end/1',
+            type: 'GET'
+        });
+        console.info(source!=null);
+        source.close();
+    }*/
+</script>
+</html>

@@ -4,7 +4,6 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.Head;
 import com.alibaba.excel.metadata.data.WriteCellData;
@@ -17,7 +16,6 @@ import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.excel.write.style.column.AbstractColumnWidthStyleStrategy;
 import com.alibaba.excel.write.style.row.SimpleRowHeightStyleStrategy;
-import com.lzk.toolboxes.entity.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 
@@ -31,11 +29,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.function.Consumer;
 
-/**
- * @author
- * @module
- * @date 2022/11/2 9:22
- */
+
 public class EasyExcelUtil {
 
     Class<?> clazz;
@@ -163,7 +157,7 @@ public class EasyExcelUtil {
         return builder.build();
     }
 
-    public EasyExcelUtil setWebFileName(HttpServletResponse response,String fileName){
+    public EasyExcelUtil setWebFileName(HttpServletResponse response, String fileName){
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
         response.setHeader("Access-Control-Allow-Origin", "*");
         try {

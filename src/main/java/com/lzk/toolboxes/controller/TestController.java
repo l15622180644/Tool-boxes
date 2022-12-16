@@ -84,7 +84,7 @@ public class TestController {
         }
     }
 
-    @PostMapping("/import")
+    /*@PostMapping("/import")
     @Transactional
     public BaseResult<Object> easyExcelImport(@RequestParam("file") MultipartFile multipartFile) throws IOException {
         List<String> errorMsg = new ArrayList<>();
@@ -114,7 +114,7 @@ public class TestController {
             reader.read(excelUtil.readSheet(0));
             return errorMsg.isEmpty() ? BaseResult.returnResult(true) : BaseResult.error(String.join("\n",errorMsg));
         }
-    }
+    }*/
 
     @RequestMapping("/export")
     public void easyExcelExport(boolean isTemplate,HttpServletResponse response) throws IOException {

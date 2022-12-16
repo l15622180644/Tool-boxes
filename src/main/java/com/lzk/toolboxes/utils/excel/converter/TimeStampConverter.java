@@ -21,7 +21,6 @@ import java.util.GregorianCalendar;
  */
 public class TimeStampConverter implements Converter<Long> {
 
-    Date gregorianDate = new GregorianCalendar(1900,0,-1).getTime();
 
     @Override
     public Class<?> supportJavaTypeKey() {

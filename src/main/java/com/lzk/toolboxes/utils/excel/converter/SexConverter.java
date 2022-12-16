@@ -16,7 +16,7 @@ public class SexConverter implements Converter<Integer> {
 
     @Override
     public Class<?> supportJavaTypeKey() {
-        return Long.class;
+        return Integer.class;
     }
 
     @Override
@@ -26,38 +26,32 @@ public class SexConverter implements Converter<Integer> {
 
     @Override
     public WriteCellData<?> convertToExcelData(Integer value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
-        if(value!=null){
-            switch (value){
-                case 0:
-                    return new WriteCellData<String>("男");
-                case 1:
-                    return new WriteCellData<String>("女");
-                default:
-                    return new WriteCellData<String>("");
-            }
+        switch (value){
+            case 0:
+                return new WriteCellData<String>("男");
+            case 1:
+                return new WriteCellData<String>("女");
+            default:
+                return new WriteCellData<String>("");
         }
-        return null;
     }
 
     @Override
     public Integer convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
-        if(cellData.getType() != CellDataTypeEnum.EMPTY){
-            if(cellData.getType() == CellDataTypeEnum.STRING){
-                switch (cellData.getStringValue()){
-                    case "男":
-                        return 0;
-                    case "女":
-                        return 1;
-                    case "":
-                        return null;
-                    default:
-                        throw new RuntimeException("性别转换异常");
-                }
-            }else {
-                throw new RuntimeException("性别转换异常");
+        if(cellData.getType() == CellDataTypeEnum.STRING){
+            switch (cellData.getStringValue()){
+                case "男":
+                    return 0;
+                case "女":
+                    return 1;
+                case "":
+                    return null;
+                default:
+                    throw new RuntimeException("性别转换异常");
             }
+        }else {
+            throw new RuntimeException("性别转换异常");
         }
-        return null;
     }
 
 }
