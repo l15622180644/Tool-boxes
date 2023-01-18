@@ -2,6 +2,7 @@ package com.lzk.toolboxes.utils;
 
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -47,7 +48,7 @@ public class TreeUtils {
             JSONObject jsonObject = iterator.next();
             if(jsonObject.getLongValue(pidName)==pid){
                 children.add(jsonObject);
-                iterator.remove();//减少循环次数提升性能
+                iterator.remove();
                 jsonObject.put(childName,getChildren(jsonObject.getLong(idName),list,pidName,idName,childName));
             }
         }
@@ -62,7 +63,7 @@ public class TreeUtils {
             JSONObject jsonObject = iterator.next();
             if(jsonObject.getLongValue(pidName)==rootFlag){
                 rootList.add(jsonObject);
-                iterator.remove();//减少循环次数提升性能
+                iterator.remove();
             }
         }
         return threadLocal.get().get("sortName")!=null?rootList.stream().sorted(Comparator.comparing(TreeUtils::comparingBySortName)).collect(Collectors.toList()):rootList;
@@ -70,6 +71,52 @@ public class TreeUtils {
 
     private static Integer comparingBySortName(JSONObject jsonObject){
         return jsonObject.getIntValue(threadLocal.get().get("sortName").toString());
+    }
+
+    public static int getDeep(List<JSONObject> treeList, String childName){
+        if(treeList==null||treeList.isEmpty()){
+            return 0;
+        }
+        int deep = 1;
+        for (int i = 0; i < treeList.size(); i++) {
+            int floors = getDeepOfRoot(treeList.get(i),childName, 1, new ArrayList<>());
+            if(floors > deep) deep = floors;
+        }
+        return deep;
+    }
+
+    private static int getDeepOfRoot(JSONObject jsonObject, String childName, int deep, List<Integer> array){
+        List<JSONObject> children = jsonObject.getObject(childName, List.class);
+        if(!children.isEmpty()) {
+            deep++;
+            for (JSONObject child : children) {
+                getDeepOfRoot(child,childName,deep,array);
+            }
+        }else{
+            array.add(deep);
+        }
+        return array.stream().mapToInt(Integer::intValue).max().getAsInt();
+    }
+
+    //获取最底部子个数
+    public static <T> List<T> getFloorsChildNum(Class<T> tClass, List<JSONObject> list, String childName, String numName){
+        list.forEach(v ->{
+            getFloorsChildNumOfRoot(v,childName,numName,new ArrayList<>());
+        });
+        return JSONArray.parseArray(JSON.toJSONString(list),tClass);
+    }
+
+    public static void getFloorsChildNumOfRoot(JSONObject jsonObject, String childName, String numName, List<Integer> array){
+        List<JSONObject> children = jsonObject.getObject(childName, List.class);
+        if(children.isEmpty()){
+            array.add(1);
+        }else {
+            for (JSONObject child : children) {
+                getFloorsChildNumOfRoot(child,childName,numName,array);
+                getFloorsChildNumOfRoot(child,childName,numName,new ArrayList<>());
+            }
+        }
+        jsonObject.put(numName,array.stream().mapToInt(Integer::intValue).sum());
     }
 
 
