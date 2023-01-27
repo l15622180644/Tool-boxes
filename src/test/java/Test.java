@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.lzk.toolboxes.ToolBoxesApplication;
 import com.lzk.toolboxes.entity.Eval;
+import com.lzk.toolboxes.entity.ExcelTreeName;
 import com.lzk.toolboxes.mapper.EvalMapper;
 import com.lzk.toolboxes.utils.*;
 import freemarker.template.Configuration;
@@ -12,6 +14,9 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.awt.*;
@@ -33,8 +38,8 @@ import java.util.concurrent.atomic.LongAdder;
  * @module
  * @date 2021/6/19 14:28
  */
-//@RunWith(SpringRunner.class)
-//@SpringBootTest(classes = ToolBoxesApplication.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ToolBoxesApplication.class)
 public class Test<T> {
 
     @Resource
@@ -122,14 +127,15 @@ public class Test<T> {
     public void show39(){
         List<Eval> evals = evalMapper.selectList(Wrappers.query());
         List<Eval> tree = TreeUtils.listToTree(Eval.class, JSON.toJSONString(evals), "parentId", "id", "children", "sort", -1);
-        List<JSONObject> list = JSONArray.parseArray(JSON.toJSONString(tree), JSONObject.class);
-        List<Eval> floorsChildNum = TreeUtils.getFloorsChildNum(Eval.class, list, "children", "floorsNum");
-        int deep = TreeUtils.getDeep(list, "children");
+        //计算所有树中最大的深度
+        int treeDeep = TreeUtils.getDeep(JSON.parseArray(JSON.toJSONString(tree), JSONObject.class), "children");
+        List<Eval> excelTreeList = TreeUtils.treeToListForExcel(Eval.class, tree, treeDeep,"children", "evalName", "treeNameList");
+        System.out.println(JSON.toJSONString(excelTreeList));
         Map<String,Object> map = new HashMap<>();
-        map.put("tree",floorsChildNum);
-        map.put("treeDeep",deep>0 ? deep-1 : 0);
+        map.put("tree",excelTreeList);
+        map.put("treeDeep",treeDeep);
         try {
-            FileWriter writer = new FileWriter("E:\\lzk\\代码生成\\rubbish\\hello.xlsx");
+            FileWriter writer = new FileWriter("D:\\测试\\hello.xlsx");
             Template template = configuration.getTemplate("parent.ftl");
             template.process(map,writer);
             writer.close();
@@ -137,6 +143,10 @@ public class Test<T> {
             e.printStackTrace();
         }
     }
+
+
+
+
 
 
 

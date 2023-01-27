@@ -5,6 +5,8 @@ package com.lzk.toolboxes.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.lzk.toolboxes.entity.Eval;
+import com.lzk.toolboxes.entity.ExcelTreeName;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -73,16 +75,21 @@ public class TreeUtils {
         return jsonObject.getIntValue(threadLocal.get().get("sortName").toString());
     }
 
+    //获取树层数
     public static int getDeep(List<JSONObject> treeList, String childName){
         if(treeList==null||treeList.isEmpty()){
             return 0;
         }
         int deep = 1;
         for (int i = 0; i < treeList.size(); i++) {
-            int floors = getDeepOfRoot(treeList.get(i),childName, 1, new ArrayList<>());
+            int floors = getDeepOfRoot(treeList.get(i),childName);
             if(floors > deep) deep = floors;
         }
         return deep;
+    }
+
+    public static int getDeepOfRoot(JSONObject jsonObject, String childName){
+        return getDeepOfRoot(jsonObject,childName,1,new ArrayList<>());
     }
 
     private static int getDeepOfRoot(JSONObject jsonObject, String childName, int deep, List<Integer> array){
@@ -98,25 +105,75 @@ public class TreeUtils {
         return array.stream().mapToInt(Integer::intValue).max().getAsInt();
     }
 
-    //获取最底部子个数
-    public static <T> List<T> getFloorsChildNum(Class<T> tClass, List<JSONObject> list, String childName, String numName){
-        list.forEach(v ->{
-            getFloorsChildNumOfRoot(v,childName,numName,new ArrayList<>());
-        });
-        return JSONArray.parseArray(JSON.toJSONString(list),tClass);
+    //获取最底部页子个数
+    public static int getFloorsChildNumOfRoot(JSONObject jsonObject, String childName){
+        List<JSONObject> children = jsonObject.getObject(childName, List.class);
+        if(children.isEmpty()){
+            return 0;
+        }
+        return getFloorsChildNumOfRoot(jsonObject, childName, new ArrayList<>());
     }
 
-    public static void getFloorsChildNumOfRoot(JSONObject jsonObject, String childName, String numName, List<Integer> array){
+    private static int getFloorsChildNumOfRoot(JSONObject jsonObject, String childName, List<Integer> array){
         List<JSONObject> children = jsonObject.getObject(childName, List.class);
         if(children.isEmpty()){
             array.add(1);
         }else {
             for (JSONObject child : children) {
-                getFloorsChildNumOfRoot(child,childName,numName,array);
-                getFloorsChildNumOfRoot(child,childName,numName,new ArrayList<>());
+                getFloorsChildNumOfRoot(child,childName,array);
+                getFloorsChildNumOfRoot(child,childName,new ArrayList<>());
             }
         }
-        jsonObject.put(numName,array.stream().mapToInt(Integer::intValue).sum());
+        return array.stream().mapToInt(Integer::intValue).sum();
+    }
+
+    //树型转list
+    public static <T> List<T> treeToListForExcel(Class<T> tClass,List<T> treeList,int treeDeep,String childName,String treeName,String treeNameListName){
+        List<T> convertList = new ArrayList<>();
+        treeList.forEach(v -> {
+            List<JSONObject> result = new ArrayList<>();
+            treeToListForExcelOfRoot(JSONObject.parseObject(JSON.toJSONString(v)),new ArrayList(),result,childName,treeName,treeNameListName);
+            result.forEach(v1 -> {
+                List<ExcelTreeName> treeNameList = v1.getObject(treeNameListName, List.class);
+                ExcelTreeName excelTreeName = treeNameList.get(treeNameList.size() - 1);
+                if(treeNameList.size() < treeDeep) excelTreeName.setMergeAcross(treeDeep - treeNameList.size());
+                convertList.add(v1.toJavaObject(tClass));
+            });
+        });
+        return convertList;
+    }
+
+    private static void treeToListForExcelOfRoot(JSONObject root, List<ExcelTreeName> nameArray, List result, String childName, String treeName, String treeNameListName){
+
+        List<JSONObject> children = root.getObject(childName,List.class);
+        if(children.isEmpty()){
+            List<ExcelTreeName> newArray = new ArrayList();
+            newArray.addAll(nameArray);
+            newArray.add(new ExcelTreeName(
+                    root.getString(treeName),
+                    getFloorsChildNumOfRoot(root,childName)
+            ));
+            root.put(treeNameListName,newArray);
+            result.add(root);
+        }else{
+            for (int i = 0; i < children.size(); i++) {
+                List<ExcelTreeName> newArray = new ArrayList();
+                newArray.addAll(nameArray);
+                if(i==0){
+                    int num = getFloorsChildNumOfRoot(root, childName);
+                    newArray.add(new ExcelTreeName(
+                            root.getString(treeName),
+                            num > 0 ? num-1 : num
+                    ));
+                }else {
+                    newArray.add(new ExcelTreeName(
+                            root.getString(treeName),
+                            0
+                    ));
+                }
+                treeToListForExcelOfRoot(children.get(i),newArray,result,childName,treeName,treeNameListName);
+            }
+        }
     }
 
 

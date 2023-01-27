@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author
@@ -57,5 +58,5 @@ public class Eval {
     private List<Eval> children;
 
     @TableField(exist = false)
-    private int floorsNum;
+    private List<ExcelTreeName> treeNameList;
 }

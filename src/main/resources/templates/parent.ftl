@@ -38,21 +38,18 @@
                ss:DefaultColumnWidth="54" ss:DefaultRowHeight="13.5">
             <Column ss:Index="1" ss:StyleID="Default" ss:AutoFitWidth="0" ss:Width="84"/>
             <Row ss:Height="41">
-                <Cell ss:StyleID="s50" ss:MergeAcross="${treeDeep}">
+                <Cell ss:StyleID="s50" ss:MergeAcross="<#if treeDeep gt 0>${treeDeep-1}<#else>0</#if>">
                     <Data ss:Type="String">评议项</Data>
                 </Cell>
             </Row>
             <#list tree as item>
-                <Row ss:Height="27">
-                    <Cell ss:StyleID="s50" ss:MergeDown="${item.floorsNum-1}">
-                        <Data ss:Type="String">${item.evalName}</Data>
-                    </Cell>
-                </Row>
-                <#if (item.floorsNum-2) gte 0>
-                    <#list 0..(item.floorsNum-2) as i>
-                        <Row ss:Height="27"></Row>
+                <Row ss:Height="27" >
+                    <#list item.treeNameList as excelTreeName>
+                        <Cell ss:StyleID="s50" ss:MergeAcross="${excelTreeName.mergeAcross}" ss:MergeDown="${excelTreeName.mergeDown}">
+                            <Data ss:Type="String">${excelTreeName.nodeName}</Data>
+                        </Cell>
                     </#list>
-                </#if>
+                </Row>
             </#list>
         </Table>
         <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
